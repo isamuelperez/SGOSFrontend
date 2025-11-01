@@ -1,0 +1,150 @@
+<p-toast></p-toast>
+<p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>
+
+<div class="card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Gestión de Ordenes</h2>
+        <button pButton pRipple label="Nuevo" (click)="openDialog()" icon="pi pi-plus"
+            class="p-button-success"></button>
+    </div>
+
+    <p-table #dt2 [value]="ordenes()" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5, 10, 20]"
+        [reorderableColumns]="ordenes().length"
+        [globalFilterFields]="['nombreCompleto','documentoIdentidad', 'telefono','direccion']"
+        responsiveLayout="scroll">
+        <ng-template #caption>
+            <div class="flex">
+                <p-iconfield iconPosition="left" class="ml-auto">
+                    <input pInputText type="text" (input)="dt2.filterGlobal($any($event.target).value, 'contains')"
+                        placeholder="Buscar..." />
+                    <i class="pi pi-search px-2"></i>
+                </p-iconfield>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="nombreCompleto" style="width: 25%">
+                    Nombre <p-sortIcon field="nombreCompleto"></p-sortIcon>
+                </th>
+                <th pSortableColumn="documentoIdentidad" style="width: 25%">
+                    Identificacion <p-sortIcon field="documentoIdentidad"></p-sortIcon>
+                </th>
+                <th pSortableColumn="telefono" style="width: 25%">
+                    Telefono <p-sortIcon field="telefono"></p-sortIcon>
+                </th>
+                <th pSortableColumn="direccion" style="width: 25%">
+                    Dirección <p-sortIcon field="direccion"></p-sortIcon>
+                </th>
+                <th style="width: 20%">Acciones</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr>
+                <td>{{ item.nombreCompleto }}</td>
+                <td>{{ item.documentoIdentidad }}</td>
+                <td>{{ item.telefono }}</td>
+                <td>{{ item.direccion }}</td>
+                <td>
+                    <div class="d-flex">
+                        <p-button icon="pi pi-pencil" (click)="edit(item)" class="px-1" [rounded]="true"
+                            severity="success" />
+                        <p-button icon="pi pi-trash" (click)="delete(item.id)" [rounded]="true" severity="danger" />
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="empty">
+            <tr>
+                <td colspan="3" class="text-center">No se encontraros registros.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="showDialog" [style]="{ width: '800px' }" header="{{ titleDialog }}" [modal]="true"
+    styleClass="p-fluid">
+    <form [formGroup]="myForm">
+        <div class="mb-3 gap-5 d-flex mt-5">
+
+            <div class="flex-fill">
+                <p-floatlabel class="" variant="on">
+                    <p-select class="form-control w-100" [options]="estados()" [checkmark]="true" optionLabel="label"
+                        optionValue="value" [showClear]="true" formControlName="estado"
+                        appendTo="body" />
+                    <label for="estado">Estados</label>
+                </p-floatlabel>
+                @if (myForm.get('nombreCompleto')?.touched &&
+                myForm.get('nombreCompleto')?.invalid) {
+                <div class="text-danger small" style="font-size: 0.5rem">
+                    Este campo es obligatorio
+                </div>
+                }
+
+            </div>
+
+            <div class="flex-fill">
+                <p-floatlabel>
+                    <input pInputText id="descripcion" autocomplete="off" required="true" class="form-control w-100"
+                        formControlName="descripcion" />
+                    <label for="descripcion">Descripción</label>
+                </p-floatlabel>
+
+                @if (myForm.get('descripcion')?.touched && myForm.get('descripcion')?.invalid) {
+                <div class="text-danger small" style="font-size: 0.5rem">
+                    Este campo es obligatorio
+                </div>
+                }
+            </div>
+        </div>
+
+        <div class="mb-3 gap-5 d-flex mt-5">
+
+            <div class="flex-fill">
+                <p-floatlabel>
+                    <p-select class="form-control w-100" [options]="estados()" [checkmark]="true" optionLabel="label"
+                        optionValue="value" [showClear]="true" formControlName="tecnicoAsignado"
+                        appendTo="body" />
+                    <label for="tecnicoAsignado">Técnico Asignado</label>
+                </p-floatlabel>
+
+                @if (myForm.get('tecnicoAsignado')?.touched &&
+                myForm.get('tecnicoAsignado')?.invalid) {
+                <div class="text-danger small" style="font-size: 0.5rem">
+                    Este campo es obligatorio
+                </div>
+                }
+
+            </div>
+
+            <div class="flex-fill">
+
+                <p-floatlabel>
+                    <p-select class="form-control w-100" [options]="estados()" [checkmark]="true" optionLabel="label"
+                        optionValue="value" [showClear]="true" formControlName="clienteAsociado"
+                        appendTo="body" />
+                    <label for="clienteAsociado">Cliente Asociado</label>
+                </p-floatlabel>
+                
+                @if (myForm.get('clienteAsociado')?.touched &&
+                myForm.get('clienteAsociado')?.invalid) {
+                <div class="text-danger small" style="font-size: 0.5rem">
+                    Este campo es obligatorio
+                </div>
+                }
+
+            </div>
+        </div>
+
+    </form>
+
+
+
+    <ng-template pTemplate="footer">
+        <button type="button" class="btn btn-danger" (click)="hideDialog()">
+            Cancelar
+        </button>
+        <button type="submit" class="p-button-success" (click)="save()">
+            Guardar
+        </button>
+    </ng-template>
+</p-dialog>

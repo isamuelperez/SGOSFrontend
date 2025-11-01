@@ -1,0 +1,9 @@
+<p-menubar [model]="items">
+    <ng-template pTemplate="start">
+        <a href="/administrador"><span class="navbar-brand me-4">Home</span></a>
+    </ng-template>
+    <button (click)="logOut()" type="button" class="btn btn-danger">Cerrar Sesión</button>
+</p-menubar>
+
+<router-outlet></router-outlet>
+
