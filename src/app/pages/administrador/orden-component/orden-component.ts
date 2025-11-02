@@ -21,6 +21,7 @@ import { ButtonModule } from 'primeng/button';
 
 import { SelectModule } from 'primeng/select';
 import { Orden } from '../../../core/services/orden';
+import { Tecnico } from '../../../core/services/tecnico';
 
 @Component({
   selector: 'app-orden-component',
@@ -47,6 +48,8 @@ export class OrdenComponent {
   myForm!: FormGroup;
 
   ordenes = signal<any>([]);
+  clientes = signal<any>([]);
+  tecnicos = signal<any>([]);
   showDialog = signal<boolean>(false);
   titleDialog: string = '';
   isEdit = signal<boolean>(false);
@@ -68,6 +71,8 @@ export class OrdenComponent {
 
   constructor(
     private _ordenService: Orden,
+    private _clienteService: Cliente,
+    private _tecnicoService: Tecnico,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private fb: FormBuilder
@@ -87,9 +92,41 @@ export class OrdenComponent {
   load() {
     this._ordenService.getAll().subscribe({
       next: (resp) => {
-        console.log(resp);
+        console.log(resp)
         if (resp.status === 200) {
           this.ordenes.set(resp.data);
+        }
+      },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'danger',
+          summary: 'Fallo',
+          detail: 'Error al obtener los registros',
+          life: 3000,
+        });
+      },
+    });
+
+    this._clienteService.getAll().subscribe({
+      next: (resp) => {
+        if (resp.status === 200) {
+          this.clientes.set(resp.data);
+        }
+      },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'danger',
+          summary: 'Fallo',
+          detail: 'Error al obtener los registros',
+          life: 3000,
+        });
+      },
+    });
+
+    this._tecnicoService.getAll().subscribe({
+      next: (resp) => {
+        if (resp.status === 200) {
+          this.tecnicos.set(resp.data);
         }
       },
       error: (error) => {
@@ -106,6 +143,7 @@ export class OrdenComponent {
   openDialog() {
     this.myForm.reset();
     this.id.set(0);
+    this.enableIpunt();
     this.objetRegister = null;
     this.submitted.set(false);
     this.isEdit.set(false);
@@ -121,6 +159,7 @@ export class OrdenComponent {
     this.objetRegister = { ...item };
     this.id.set(item.id);
     this.isEdit.set(true);
+    this.disableIpunt();
     this.myForm.patchValue(this.objetRegister);
     this.titleDialog = 'Modificar';
     this.showDialog.set(true);
@@ -219,5 +258,18 @@ export class OrdenComponent {
         this.myForm.reset();
         this.showDialog.set(true);
       });
+  }
+
+  disableIpunt(){
+    this.myForm.get('tecnicoAsignado')?.disable();
+    this.myForm.get('descripcion')?.disable();
+    this.myForm.get('clienteAsociado')?.disable();
+  }
+
+  enableIpunt(){
+    this.myForm.get('descripcion')?.enable();
+    this.myForm.get('tecnicoAsignado')?.enable();
+    this.myForm.get('descripcion')?.enable();
+    this.myForm.get('clienteAsociado')?.enable();
   }
 }

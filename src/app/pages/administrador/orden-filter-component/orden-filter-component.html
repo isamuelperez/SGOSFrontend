@@ -1,1 +1,125 @@
-<p>orden-filter-component works!</p>
+<div class="card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Reporte de Ordenes</h2>
+    </div>
+
+    <form [formGroup]="myForm">
+        <div class="row g-3 mt-3">
+            <div class="col-12 col-md-6">
+                <p-floatlabel>
+                    <p-select class="form-control w-100" [options]="estados()" [checkmark]="true" optionLabel="label"
+                        optionValue="value" [showClear]="true" formControlName="estado" appendTo="body" />
+                    <label for="estado">Estados</label>
+                </p-floatlabel>
+                @if (myForm.get('estado')?.touched && myForm.get('estado')?.invalid) {
+                <div class="text-danger small">Este campo es obligatorio</div>
+                }
+            </div>
+
+            <div class="col-12 col-md-6">
+                <p-floatlabel>
+                    <input pInputText id="descripcion" autocomplete="off" required="true" class="form-control w-100"
+                        formControlName="descripcion" [disabled]="true" />
+                    <label for="descripcion">Documento Cliente</label>
+                </p-floatlabel>
+                @if (myForm.get('descripcion')?.touched &&
+                myForm.get('descripcion')?.invalid) {
+                <div class="text-danger small">Este campo es obligatorio</div>
+                }
+            </div>
+        </div>
+
+        <div class="row g-3 mt-3">
+            <div class="col-12 col-md-6">
+                <p-floatlabel>
+                    <p-select class="form-control w-100" [options]="tecnicos()" [checkmark]="true"
+                        optionLabel="nombreCompleto" optionValue="id" [showClear]="true"
+                        formControlName="tecnicoAsignado" appendTo="body" />
+                    <label for="tecnicoAsignado">Técnico Asignado</label>
+                </p-floatlabel>
+                @if (myForm.get('tecnicoAsignado')?.touched &&
+                myForm.get('tecnicoAsignado')?.invalid) {
+                <div class="text-danger small">Este campo es obligatorio</div>
+                }
+            </div>
+
+            <div class="col-12 col-md-6">
+                <p-floatlabel>
+                    <p-select class="form-control w-100" [options]="clientes()" [checkmark]="true"
+                        optionLabel="nombreCompleto" optionValue="id" [showClear]="true"
+                        formControlName="clienteAsociado" appendTo="body" />
+                    <label for="clienteAsociado">Cliente Asociado</label>
+                </p-floatlabel>
+                @if (myForm.get('clienteAsociado')?.touched &&
+                myForm.get('clienteAsociado')?.invalid) {
+                <div class="text-danger small">Este campo es obligatorio</div>
+                }
+            </div>
+        </div>
+    </form>
+
+ <div class="d-flex justify-content-end align-items-center mt-4">
+  <div class="d-flex gap-4">
+    <button type="button" class="btn btn-primary">Filtrar</button>
+    <button type="button" class="btn btn-info">limpiar</button>
+  </div>
+</div>
+
+    <hr />
+    <p-table #dt2 [value]="ordenes()" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5, 10, 20]"
+        [reorderableColumns]="ordenes().length" [globalFilterFields]="[
+      'id',
+      'clienteNombre',
+      'tecnicoNombre',
+      'estado',
+      'descripcion',
+      'fechaCreacion'
+    ]" responsiveLayout="scroll">
+        <ng-template #caption>
+            <div class="flex">
+                <p-iconfield iconPosition="left" class="ml-auto">
+                    <input pInputText type="text" (input)="dt2.filterGlobal($any($event.target).value, 'contains')"
+                        placeholder="Buscar..." />
+                    <i class="pi pi-search px-2"></i>
+                </p-iconfield>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="id" style="width: 7%">
+                    ID <p-sortIcon field="id"></p-sortIcon>
+                </th>
+                <th pSortableColumn="clienteNombre" style="width: 20%">
+                    Nombre Cliente <p-sortIcon field="clienteNombre"></p-sortIcon>
+                </th>
+                <th pSortableColumn="tecnicoNombre" style="width: 20%">
+                    Nombre Tecnico <p-sortIcon field="tecnicoNombre"></p-sortIcon>
+                </th>
+                <th pSortableColumn="estado" style="width: 15%">
+                    Estado <p-sortIcon field="estado"></p-sortIcon>
+                </th>
+                <th pSortableColumn="descripcion" style="width: 25%">
+                    Descripción <p-sortIcon field="descripcion"></p-sortIcon>
+                </th>
+                <th pSortableColumn="fechaCreacion" style="width: 25%">
+                    Fecha <p-sortIcon field="fechaCreacion"></p-sortIcon>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.clienteNombre }}</td>
+                <td>{{ item.tecnicoNombre }}</td>
+                <td>{{ item.estado }}</td>
+                <td>{{ item.descripcion }}</td>
+                <td>{{ item.fechaCreacion | date }}</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="empty">
+            <tr>
+                <td colspan="3" class="text-center">No se encontraros registros.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

@@ -10,7 +10,7 @@
 
     <p-table #dt2 [value]="ordenes()" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5, 10, 20]"
         [reorderableColumns]="ordenes().length"
-        [globalFilterFields]="['nombreCompleto','documentoIdentidad', 'telefono','direccion']"
+        [globalFilterFields]="['id','clienteNombre', 'tecnicoNombre','estado', 'descripcion', 'fechaCreacion']"
         responsiveLayout="scroll">
         <ng-template #caption>
             <div class="flex">
@@ -23,27 +23,35 @@
         </ng-template>
         <ng-template pTemplate="header">
             <tr>
-                <th pSortableColumn="nombreCompleto" style="width: 25%">
-                    Nombre <p-sortIcon field="nombreCompleto"></p-sortIcon>
+                <th pSortableColumn="id" style="width: 7%">
+                    ID <p-sortIcon field="id"></p-sortIcon>
                 </th>
-                <th pSortableColumn="documentoIdentidad" style="width: 25%">
-                    Identificacion <p-sortIcon field="documentoIdentidad"></p-sortIcon>
+                <th pSortableColumn="clienteNombre" style="width: 20%">
+                    Nombre Cliente <p-sortIcon field="clienteNombre"></p-sortIcon>
                 </th>
-                <th pSortableColumn="telefono" style="width: 25%">
-                    Telefono <p-sortIcon field="telefono"></p-sortIcon>
+                <th pSortableColumn="tecnicoNombre" style="width: 20%">
+                    Nombre Tecnico <p-sortIcon field="tecnicoNombre"></p-sortIcon>
                 </th>
-                <th pSortableColumn="direccion" style="width: 25%">
-                    Dirección <p-sortIcon field="direccion"></p-sortIcon>
+                <th pSortableColumn="estado" style="width: 15%">
+                    Estado <p-sortIcon field="estado"></p-sortIcon>
+                </th>
+                 <th pSortableColumn="descripcion" style="width: 25%">
+                    Descripción <p-sortIcon field="descripcion"></p-sortIcon>
+                </th>
+                 <th pSortableColumn="fechaCreacion" style="width: 25%">
+                    Fecha <p-sortIcon field="fechaCreacion"></p-sortIcon>
                 </th>
                 <th style="width: 20%">Acciones</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-item>
             <tr>
-                <td>{{ item.nombreCompleto }}</td>
-                <td>{{ item.documentoIdentidad }}</td>
-                <td>{{ item.telefono }}</td>
-                <td>{{ item.direccion }}</td>
+                <td>{{ item.id }}</td>
+                <td>{{ item.clienteNombre }}</td>
+                <td>{{ item.tecnicoNombre }}</td>
+                <td>{{ item.estado }}</td>
+                <td>{{ item.descripcion }}</td>
+                <td>{{ item.fechaCreacion | date }}</td>
                 <td>
                     <div class="d-flex">
                         <p-button icon="pi pi-pencil" (click)="edit(item)" class="px-1" [rounded]="true"
@@ -63,81 +71,56 @@
 
 <p-dialog [(visible)]="showDialog" [style]="{ width: '800px' }" header="{{ titleDialog }}" [modal]="true"
     styleClass="p-fluid">
+    
     <form [formGroup]="myForm">
-        <div class="mb-3 gap-5 d-flex mt-5">
-
-            <div class="flex-fill">
-                <p-floatlabel class="" variant="on">
+        <div class="row g-3 mt-3">
+            <div class="col-12 col-md-6">
+                <p-floatlabel>
                     <p-select class="form-control w-100" [options]="estados()" [checkmark]="true" optionLabel="label"
-                        optionValue="value" [showClear]="true" formControlName="estado"
-                        appendTo="body" />
+                        optionValue="value" [showClear]="true" formControlName="estado" appendTo="body" />
                     <label for="estado">Estados</label>
                 </p-floatlabel>
-                @if (myForm.get('nombreCompleto')?.touched &&
-                myForm.get('nombreCompleto')?.invalid) {
-                <div class="text-danger small" style="font-size: 0.5rem">
-                    Este campo es obligatorio
-                </div>
+                @if (myForm.get('estado')?.touched && myForm.get('estado')?.invalid) {
+                <div class="text-danger small">Este campo es obligatorio</div>
                 }
-
             </div>
 
-            <div class="flex-fill">
+            <div class="col-12 col-md-6">
                 <p-floatlabel>
                     <input pInputText id="descripcion" autocomplete="off" required="true" class="form-control w-100"
-                        formControlName="descripcion" />
+                        formControlName="descripcion" [disabled]="true" />
                     <label for="descripcion">Descripción</label>
                 </p-floatlabel>
-
                 @if (myForm.get('descripcion')?.touched && myForm.get('descripcion')?.invalid) {
-                <div class="text-danger small" style="font-size: 0.5rem">
-                    Este campo es obligatorio
-                </div>
+                <div class="text-danger small">Este campo es obligatorio</div>
                 }
             </div>
         </div>
 
-        <div class="mb-3 gap-5 d-flex mt-5">
-
-            <div class="flex-fill">
+        <div class="row g-3 mt-3">
+            <div class="col-12 col-md-6">
                 <p-floatlabel>
-                    <p-select class="form-control w-100" [options]="estados()" [checkmark]="true" optionLabel="label"
-                        optionValue="value" [showClear]="true" formControlName="tecnicoAsignado"
-                        appendTo="body" />
+                    <p-select class="form-control w-100" [options]="tecnicos()" [checkmark]="true" optionLabel="nombreCompleto"
+                        optionValue="id" [showClear]="true" formControlName="tecnicoAsignado" appendTo="body" />
                     <label for="tecnicoAsignado">Técnico Asignado</label>
                 </p-floatlabel>
-
-                @if (myForm.get('tecnicoAsignado')?.touched &&
-                myForm.get('tecnicoAsignado')?.invalid) {
-                <div class="text-danger small" style="font-size: 0.5rem">
-                    Este campo es obligatorio
-                </div>
+                @if (myForm.get('tecnicoAsignado')?.touched && myForm.get('tecnicoAsignado')?.invalid) {
+                <div class="text-danger small">Este campo es obligatorio</div>
                 }
-
             </div>
 
-            <div class="flex-fill">
-
+            <div class="col-12 col-md-6">
                 <p-floatlabel>
-                    <p-select class="form-control w-100" [options]="estados()" [checkmark]="true" optionLabel="label"
-                        optionValue="value" [showClear]="true" formControlName="clienteAsociado"
-                        appendTo="body" />
+                    <p-select class="form-control w-100" [options]="clientes()" [checkmark]="true" optionLabel="nombreCompleto"
+                        optionValue="id" [showClear]="true" formControlName="clienteAsociado" appendTo="body" />
                     <label for="clienteAsociado">Cliente Asociado</label>
                 </p-floatlabel>
-                
-                @if (myForm.get('clienteAsociado')?.touched &&
-                myForm.get('clienteAsociado')?.invalid) {
-                <div class="text-danger small" style="font-size: 0.5rem">
-                    Este campo es obligatorio
-                </div>
+                @if (myForm.get('clienteAsociado')?.touched && myForm.get('clienteAsociado')?.invalid) {
+                <div class="text-danger small">Este campo es obligatorio</div>
                 }
-
             </div>
         </div>
-
     </form>
-
-
 
     <ng-template pTemplate="footer">
         <button type="button" class="btn btn-danger" (click)="hideDialog()">

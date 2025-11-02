@@ -22,7 +22,8 @@ export class Orden {
   }
 
   update(id: number, request: any):Observable<any> {
-   return this.http.put<any>(`${environment.host}/api/Orden/${id}`, request);
+    request.id = id;
+   return this.http.put<any>(`${environment.host}/api/Orden/${id}/estado`, request);
   }
 
   
